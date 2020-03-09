@@ -1,14 +1,21 @@
 package com.example.demo.model;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class CreateUserRequest {
     private Long id;
     private String firstName;
     private String lastName;
+    @NotEmpty
     private String username;
+    @NotNull
     private Long tckn;
+    @NotEmpty
     private String password;
-    private String status;
+    @NotEmpty
     private String email;
+    private String status;
 
     public String getEmail() {
         return email;

@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="user")
@@ -18,15 +20,18 @@ public class User {
     @Column(name="user_name")
     private String username;
 
+    @NotNull
     @Column(name="tckn")
     private Long tckn;
 
+    @NotEmpty
     @Column(name="password")
     private String password;
 
     @Column(name="status")
     private String status;
 
+    @NotEmpty
     @Column(name="email")
     private String email;
 

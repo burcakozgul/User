@@ -1,11 +1,16 @@
 package com.example.demo.model;
 
-public class UpdateUserInfoRequest {
-    private String firstName;
-    private String lastName;
-    private String password;
-    private String status;
+import javax.validation.constraints.NotEmpty;
 
+public class UpdateUserInfoRequest {
+    @NotEmpty
+    private String firstName;
+    @NotEmpty
+    private String lastName;
+    @NotEmpty
+    private String password;
+    @NotEmpty
+    private String status;
 
     public String getFirstName() {
         return firstName;
