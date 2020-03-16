@@ -3,6 +3,7 @@ package com.example.demo.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name="user")
@@ -26,6 +27,7 @@ public class User {
 
     @NotEmpty
     @Column(name="password")
+    @Pattern(regexp = ".*[A-Z].*", message = "Please use at least one capital letter.")
     private String password;
 
     @Column(name="status")

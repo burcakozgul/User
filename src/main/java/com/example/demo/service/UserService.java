@@ -3,17 +3,18 @@ package com.example.demo.service;
 import com.example.demo.exception.UserException;
 import com.example.demo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.demo.respository.UserRepository;
 
-import javax.persistence.Id;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserService {
+
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private UserRepository userRepository;
@@ -22,14 +23,14 @@ public class UserService {
         User user = new User();
         CreateUserResponse createUserResponse = new CreateUserResponse();
         try {
-            if (userRepository.existsById(request.getId())) throw new UserException("User is already exist");
-            else if (userRepository.existsByemail(request.getEmail())) throw new UserException("This email is registered. Please different one.");
+           // if (userRepository.existsById(request.getId())) throw new UserException("User is already exist");
+            if (userRepository.existsByemail(request.getEmail())) throw new UserException("This email is registered. Please different one.");
             else if (userRepository.existsByusername(request.getUsername())) throw new UserException("This username is registered. Please different one");
-            user.setId(request.getId());
+           // user.setId(request.getId());
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setUsername(request.getUsername());
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setTckn(request.getTckn());
             user.setStatus(request.getStatus());
             user.setEmail(request.getEmail());
@@ -67,7 +68,7 @@ public class UserService {
         try {
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setStatus(request.getStatus());
             updateUserInfoResponse.setResultCode(0);
             updateUserInfoResponse.setResultDesc("Success");
@@ -83,19 +84,27 @@ public class UserService {
     public LoginUserResponse loginUser(LoginUserRequest request) {
         LoginUserResponse response = new LoginUserResponse();
         try {
-            if (userRepository.existsByusername(request.getUsername()) && userRepository.existsBypassword(request.getPassword())) {
-                response.setResultCode(0);
-                response.setResultDesc("Success");
+            if (userRepository.existsByusername(request.getUsername())) {
+                User user = userRepository.getUserByusername(request.getUsername());
+                if(passwordEncoder.matches(request.getPassword(),user.getPassword())) {
+                    response.setResultCode(0);
+                    response.setResultDesc("Success");
+                }
+                else {
+                    response.setResultCode(-1);
+                    response.setResultDesc("User not found");
+                }
             }
             else {
                 response.setResultCode(-1);
                 response.setResultDesc("User not found");
             }
-        }
-        catch (Exception e){
-           response.setResultCode(-1);
-           response.setResultDesc(e.getMessage());
+
+            } catch (Exception ex) {
+            response.setResultCode(-1);
+            response.setResultDesc(ex.getMessage());
         }
         return  response;
     }
+
 }
